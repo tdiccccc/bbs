@@ -1,3 +1,7 @@
+<?php
+  echo $_POST["username"];//スーパーグローバル変数
+
+?>
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -9,8 +13,17 @@
 </head>
 <body>
   <h1 class="title">PHP</h1>
-  <form action="" class="formWrapper">
+  <form action="" class="formWrapper" method="POST">
     <div class="boardWrapper">
+      <section>
+        <article>
+          <div class="wrapper">
+            <span>名前:</span>
+            <p class="username"></p>
+            <time>2020/10/15</time>
+          </div>
+        </article>
+      </section>
       <div>
         <input type="submit" value="書き込む">
         <label for="">名前:</label>
