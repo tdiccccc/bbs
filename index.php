@@ -1,7 +1,13 @@
 <?php
-  echo $_POST["username"];//スーパーグローバル変数
+  if (!empty($_POST["submitButton"])){//empty関数＝値が空かどうかの判定。!で反転させる。
+    echo $_POST["username"];//$_POSTなどはスーパーグローバル変数という
+    echo $_POST["comment"];
+  }
 
+  //データベース接続
+  $db = new PDO('mysql:host=localhost,dbname=bbs','root','root');
 ?>
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -25,12 +31,12 @@
         </article>
       </section>
       <div>
-        <input type="submit" value="書き込む">
+        <input type="submit" value="書き込む" name="submitButton">
         <label for="">名前:</label>
         <input type="text" name="username">
       </div>
       <div>
-        <textarea class="commentTextArea"></textarea>
+        <textarea class="commentTextArea" name="comment"></textarea>
       </div>
     </div>
   </form>
