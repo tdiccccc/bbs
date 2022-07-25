@@ -1,31 +1,50 @@
 <?php
+  date_default_timezone_set("Asia/Tokyo");
 
   $comment_array = array();
+  $error_message = array();
   $db = null;
+  $stmt = null;
   
   
   //データベース接続
   try {
     $db = new PDO('mysql:host=localhost;dbname=bbs','root','root');
   } catch(PDOException $e) {
-    echo $e->getMessage();
+    $error_message[] = $e->getMessage();
   }
 
   //フォームを打ち込んだ時
   if (!empty($_POST["submitButton"])){//empty関数＝値が空かどうかの判定。!で反転させる。
     
-    $postDate = date("Y-m-d H:i:s");
+    if (empty($_POST["username"])){
+      $error_message[] = "お名前を入力してください";
+    } else {
+      $escaped['username'] = htmlspecialchars($_POST["username"],ENT_QUOTES,"UTF-8");
+    }
+
+    if (empty($_POST["comment"])){
+      $error_message[] = "コメントを入力してください";
+    } else {
+      $escaped['comment'] = htmlspecialchars($_POST["comment"],ENT_QUOTES,"UTF-8");
+    }
+
+
     
-    try {
-      //$_POSTなどはスーパーグローバル変数という
-      $stmt = $db->prepare("INSERT INTO `bbs-table` (`name`, `comment`, `postDate`) VALUES (:name, :comment, :postDate);");
-      $stmt->bindParam(':name', $_POST["username"], PDO::PARAM_STR);
-      $stmt->bindParam(':comment', $_POST["comment"], PDO::PARAM_STR);
-      $stmt->bindParam(':postDate', $postDate, PDO::PARAM_STR);
-      
-      $stmt->execute();
-    } catch(PDOException $e) {
-      echo $e->getMessage();
+    if (empty($error_message)) {
+      $postDate = date("Y-m-d H:i:s");
+
+      try {
+        //$_POSTなどはスーパーグローバル変数という
+        $stmt = $db->prepare("INSERT INTO `bbs-table` (`name`, `comment`, `postDate`) VALUES (:name, :comment, :postDate);");
+        $stmt->bindParam(':name', $_POST["username"], PDO::PARAM_STR);
+        $stmt->bindParam(':comment', $_POST["comment"], PDO::PARAM_STR);
+        $stmt->bindParam(':postDate', $postDate, PDO::PARAM_STR);
+        
+        $stmt->execute();
+      } catch(PDOException $e) {
+        echo $e->getMessage();
+      }
     }
   }
   
@@ -51,6 +70,11 @@
   <h1 class="title">PHP</h1>
   <form action="" class="formWrapper" method="POST">
     <div class="boardWrapper">
+      <?php if (!empty($error_message)) : ?>
+          <?php foreach ($error_message as $value) : ?>
+              <div class="error_message">※<?php echo $value; ?></div>
+          <?php endforeach; ?>
+      <?php endif; ?>
       <section>
         <?php foreach($comment_array as $comment) : ?>
           <article>
